@@ -157,10 +157,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="colors.cpp" />
     <ClCompile Include="GoSuperFastModel.cpp" />
     <ClCompile Include="grid.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="colors.h" />
     <ClInclude Include="grid.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,10 +2,10 @@
 #include <raylib.h>
 #include <vector>
 
-class grid
+class Grid
 {
 public:
-    grid();
+    Grid();
     void Initialize();
     void Print();
     void Draw();
@@ -16,7 +16,6 @@ private:
     int numRows;
     int numCols;
     int cellSize;
-
-    std::vector<Color> GetCellColors();
+    
     std::vector<Color> colors;
 };

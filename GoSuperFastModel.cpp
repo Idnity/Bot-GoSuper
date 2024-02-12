@@ -1,33 +1,29 @@
 #include <iostream>
-#include "grid.h"
-#include "raylib.h"
+#include <raylib.h>
+#include "Application.h"
 
+// 1.08.00
 
 int main()
 {
-    //game settings
+    // game settings
     int MaxSolverIterations = 2;
 
     
-    //Application start
+    // Initialize Application
+    Application application = Application();
+
+    // window setup
+    Color darkBlue = {44, 44, 127, 255};
     InitWindow(301, 601, "GoSuperBot");
     SetTargetFPS(60);
-
-    grid grid;
-    grid.grid2D[0][3] = 1;
-    grid.grid2D[2][6] = 2;
-    grid.grid2D[4][0] = 6;
-    grid.grid2D[0][2] = 2;
-    
-    grid.Print();
     
     // Game loop
     while (!WindowShouldClose())
     {
         BeginDrawing();
-        ClearBackground(BLACK);
-        grid.Draw();
-        
+        ClearBackground(darkBlue);
+        application.Draw();
         EndDrawing();
     }
     
