@@ -23,6 +23,7 @@ int main()
     {
         BeginDrawing();
         ClearBackground(darkBlue);
+        application.HandleInput();
         application.Draw();
         EndDrawing();
     }
