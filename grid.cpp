@@ -3,6 +3,8 @@
 #include <raylib.h>
 #include "colors.h"
 
+using namespace std;
+
 Grid::Grid()
 {
     numRows = 10;
@@ -68,21 +70,24 @@ bool Grid::IsColumnEmpty(int column)
     return true;
 }
 
-void Grid::PushGridDown()
+bool Grid::PushGridDown()
 {
+    bool didChange = false;
     for (int row = numRows - 2; row >= 0; row--)
     {
         for (int column = 0; column < numCols; column++)
         {
             if (grid2D[row][column] != 0)
             {
-                PushItemDown(row, column);
+                if (PushItemDown(row, column))
+                    didChange = true;
             }
         }
     }
+    return didChange;
 }
 
-void Grid::PushGridRight()
+bool Grid::PushGridRight()
 {
     int emptyColumns = 0;
     for (int column = numCols - 1; column >= 0; column--)
@@ -96,6 +101,7 @@ void Grid::PushGridRight()
             MoveColumnRight(column, emptyColumns);
         }
     }
+    return emptyColumns > 0;
 }
 
 void Grid::MoveColumnRight(int column, const int numCols)
@@ -107,7 +113,7 @@ void Grid::MoveColumnRight(int column, const int numCols)
     }
 }
 
-void Grid::PushItemDown(int row, int column)
+bool Grid::PushItemDown(int row, int column)
 {
     int unoccupiedRow = row;
     
@@ -122,23 +128,49 @@ void Grid::PushItemDown(int row, int column)
     {
         grid2D[unoccupiedRow][column] = grid2D[row][column];
         grid2D[row][column] = 0;
+        return true;
     }
+    return false;
+}
+
+bool Grid::HasCellAdjacentWithSameType(int row, int column)
+{
+    int typeOfCell = grid2D[row][column];
+    
+    // check horizontal cells and click if same type
+    if(column+1 < numCols && grid2D[row][column+1] == typeOfCell)
+        return true;
+    if(column-1 >=0 && grid2D[row][column-1] == typeOfCell)
+        return true;
+    
+    // check vertical cells and click if same type
+    if(row+1 < numRows && grid2D[row+1][column] == typeOfCell)
+        return true;
+    if(row-1 >=0 && grid2D[row-1][column] == typeOfCell)
+        return true;
+    
+    return false;
 }
 
 void Grid::DoRandomValidClick()
 {
-    // get valid cell click
-    int pressRow = rand()%numRows;
-    int pressColumn = rand()%numCols;
-    while (IsCellEmpty(pressRow, pressColumn))
-    {
-        pressRow = rand()%numRows;
-        pressColumn = rand()%numCols;
-    }
-    
-    ClickCell(pressRow, pressColumn);
+    vector<SCoord> testTargets = CoordsWithContent;
+    int index = testTargets.size()-1;
+    SCoord ClickTarget = testTargets[index];
 
-    // check game state, reload game and store score of run
+    while (!HasCellAdjacentWithSameType(ClickTarget.row, ClickTarget.column))
+    {
+        if (testTargets.size()-1 > 0)
+        {
+            index = rand()%max(testTargets.size()-1, 0);
+        }
+        ClickTarget = CoordsWithContent[index];
+        testTargets.erase(testTargets.begin() + index);
+    }
+    ClickCell(ClickTarget.row, ClickTarget.column);
+    
+    // add to sequence
+    ClickSequence.push_back(ClickTarget);
 }
 
 void Grid::ClickCell(int row, int column)
@@ -163,14 +195,34 @@ void Grid::ClickCell(int row, int column)
         ClickCell(row, column-1);
 }
 
-int Grid::GetGameState()
+gridState Grid::GetGridState()
 {
-    for (int row = numRows - 1; row >= 0; row--)
+    UpdateCoordsWithContent();
+    
+    // check if coords with content has adjacent clickable cells of same type
+    for (SCoord coords_with_content : CoordsWithContent)
     {
-        if (grid2D[row][column] != 0)
+        if (HasCellAdjacentWithSameType(coords_with_content.row, coords_with_content.column))
         {
-            return false;
+            return inProgress;
         }
     }
-    return true;
+    return CoordsWithContent.empty() ? won : lost;
+}
+
+void Grid::UpdateCoordsWithContent()
+{
+    CoordsWithContent.clear();
+    
+    // find content
+    for (int row = 0; row < numRows; row++)
+    {
+        for (int column = 0; column < numCols; ++column)
+        {
+            if (grid2D[row][column] != 0)
+            {
+                CoordsWithContent.push_back(SCoord{row, column});
+            }
+        }
+    }
 }

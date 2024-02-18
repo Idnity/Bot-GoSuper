@@ -1,9 +1,11 @@
 ﻿#include "Application.h"
 
+#include "Bot.h"
+
 Application::Application()
 {
     grid = Grid();
-    FetchGameboard();
+    StartAttempt();
 }
 
 void Application::Draw()
@@ -16,51 +18,96 @@ void Application::HandleInput()
     switch (GetKeyPressed())
     {
     case KEY_SPACE:
-        IterateTask();
+        AutomationEnabled = !AutomationEnabled;
         break;
+    case KEY_S:
+        IterateTask();
     default: ;
     }
 }
 
 void Application::IterateTask()
 {
+    taskIteration++;
+    
     switch (taskIteration)
     {
-    case 0:
-        grid.PushGridDown();
-        break;
     case 1:
-        grid.PushGridRight();
+        if (!grid.PushGridDown())
+            IterateTask();
         break;
     case 2:
+        if (!grid.PushGridRight())
+            IterateTask();
+        break;
+    case 3:
+        // could use check grid to optimize next click if in progress
+        HandleGridState(grid.GetGridState());
+        break;
+    case 4:
         grid.DoRandomValidClick();
-    break;
-        
-    default: ;
-    }
-    if (taskIteration >= 2)
-    {
+        break;
+    default:
         taskIteration = 0;
-    }
-    else
-    {
-        taskIteration++;
+        IterateTask();
     }
 }
 
-void Application::StartTrial()
+void Application::StartAttempt()
 {
-    srand(1);
+    attempts++;
+    taskIteration = 0;
+    srand(attempts);
+    grid.Initialize();
+    grid.ClickSequence.clear();
+    FetchGameboard();
 }
 
 void Application::FetchGameboard()
 {
-    grid.grid2D[9][3] = 1;
-    grid.grid2D[2][6] = 2;
-    grid.grid2D[4][0] = 6;
-    grid.grid2D[6][0] = 4;
-    grid.grid2D[5][4] = 2;
-    grid.grid2D[8][6] = 2;
-    grid.grid2D[5][9] = 2;
-    grid.grid2D[1][1] = 2;
+    for (int row = 0; row < grid.numRows; row++)
+    {
+        for (int column = 0; column < grid.numCols; column++)
+        {
+            grid.grid2D[row][column] = 1 + rand() % 4;
+        }
+    }
+    
+    grid.UpdateCoordsWithContent();
+}
+
+void Application::HandleGridState(gridState state)
+{
+    switch (state)
+    {
+    case inProgress:
+        IterateTask();
+        break;
+    case lost:
+        // store score if best
+        StartAttempt();
+        break;
+    case won:
+        StartAttempt();
+        //StartupBot();
+        break;
+    }
+}
+
+void Application::StartupBot()
+{
+    isBotRunning = true;
+}
+
+void Application::tick()
+{
+    HandleInput();
+    if (isBotRunning)
+        bot.tick();
+    if (AutomationEnabled)
+    {
+        IterateTask();
+    }
+    
+    Draw();
 }

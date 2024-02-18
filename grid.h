@@ -4,6 +4,13 @@
 
 #include "SCoord.h"
 
+enum gridState
+{
+    inProgress,
+    won,
+    lost
+};
+
 class Grid
 {
 public:
@@ -14,22 +21,26 @@ public:
     
     bool IsCellEmpty(int row, int column);
     bool IsColumnEmpty(int column);
-    
-    void PushGridDown();
-    void PushGridRight();
+
+    bool PushGridDown();
+    bool PushGridRight();
     void MoveColumnRight(int column, int numCols);
-    void PushItemDown(int row, int column);
+    bool PushItemDown(int row, int column);
+    bool HasCellAdjacentWithSameType(int row, int column);
 
     void DoRandomValidClick();
     void ClickCell(int row, int column);
-    int GetGameState();
+    gridState GetGridState();
+    void UpdateCoordsWithContent();
 
+    std::vector<SCoord> CoordsWithContent;
+    std::vector<SCoord> ClickSequence;
     int grid2D[20][10];
     
-private:
     int numRows;
     int numCols;
-    int cellSize;
     
+private:
+    int cellSize;
     std::vector<Color> colors;
 };
