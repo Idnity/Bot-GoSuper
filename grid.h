@@ -2,6 +2,8 @@
 #include <raylib.h>
 #include <vector>
 
+#include "SCoord.h"
+
 class Grid
 {
 public:
@@ -18,8 +20,10 @@ public:
     void MoveColumnRight(int column, int numCols);
     void PushItemDown(int row, int column);
 
+    void DoRandomValidClick();
     void ClickCell(int row, int column);
-    
+    int GetGameState();
+
     int grid2D[20][10];
     
 private:

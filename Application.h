@@ -8,6 +8,8 @@ public:
     void Draw();
     void HandleInput();
     void IterateTask();
+    void StartTrial();
+    void FetchGameboard();
     
     Grid grid;
 

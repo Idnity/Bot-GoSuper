@@ -3,11 +3,7 @@
 Application::Application()
 {
     grid = Grid();
-    grid.grid2D[9][3] = 1;
-    grid.grid2D[2][6] = 2;
-    grid.grid2D[4][0] = 6;
-    grid.grid2D[6][0] = 4;
-    grid.grid2D[7][2] = 2;
+    FetchGameboard();
 }
 
 void Application::Draw()
@@ -36,12 +32,35 @@ void Application::IterateTask()
     case 1:
         grid.PushGridRight();
         break;
-    case 3:
-
-        grid.ClickCell();
+    case 2:
+        grid.DoRandomValidClick();
     break;
         
     default: ;
     }
-    taskIteration = taskIteration+1%2;
+    if (taskIteration >= 2)
+    {
+        taskIteration = 0;
+    }
+    else
+    {
+        taskIteration++;
+    }
+}
+
+void Application::StartTrial()
+{
+    srand(1);
+}
+
+void Application::FetchGameboard()
+{
+    grid.grid2D[9][3] = 1;
+    grid.grid2D[2][6] = 2;
+    grid.grid2D[4][0] = 6;
+    grid.grid2D[6][0] = 4;
+    grid.grid2D[5][4] = 2;
+    grid.grid2D[8][6] = 2;
+    grid.grid2D[5][9] = 2;
+    grid.grid2D[1][1] = 2;
 }

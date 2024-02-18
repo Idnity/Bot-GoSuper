@@ -98,7 +98,7 @@ void Grid::PushGridRight()
     }
 }
 
-void Grid::MoveColumnRight(int column, int numCols)
+void Grid::MoveColumnRight(int column, const int numCols)
 {
     for (int row = 0; row < numRows; ++row)
     {
@@ -125,14 +125,52 @@ void Grid::PushItemDown(int row, int column)
     }
 }
 
-void Grid::ClickCell(int row, int column)
+void Grid::DoRandomValidClick()
 {
+    // get valid cell click
     int pressRow = rand()%numRows;
     int pressColumn = rand()%numCols;
     while (IsCellEmpty(pressRow, pressColumn))
     {
-        int pressRow = rand()%numRows;
-        int pressColumn = rand()%numCols;
+        pressRow = rand()%numRows;
+        pressColumn = rand()%numCols;
     }
+    
+    ClickCell(pressRow, pressColumn);
+
+    // check game state, reload game and store score of run
 }
 
+void Grid::ClickCell(int row, int column)
+{
+    int typeOfCell = grid2D[row][column];
+    if (typeOfCell == 0)
+        return;
+
+    // clear cell
+    grid2D[row][column] = 0;
+    
+    // check vertical cells and click if same type
+    if(row+1 >=0 && row+1 < numRows && grid2D[row+1][column] == typeOfCell)
+        ClickCell(row+1, column);
+    if(row-1 >=0 && row-1 < numRows && grid2D[row-1][column] == typeOfCell)
+        ClickCell(row-1, column);
+
+    // check horizontal cells and click if same type
+    if(column+1 >=0 && column+1 < numCols && grid2D[row][column+1] == typeOfCell)
+        ClickCell(row, column+1);
+    if(column-1 >=0 && column-1 < numCols && grid2D[row][column-1] == typeOfCell)
+        ClickCell(row, column-1);
+}
+
+int Grid::GetGameState()
+{
+    for (int row = numRows - 1; row >= 0; row--)
+    {
+        if (grid2D[row][column] != 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
