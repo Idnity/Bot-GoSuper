@@ -10,7 +10,7 @@ public:
     void HandleInput();
     void IterateTask();
     void StartAttempt();
-    void FetchGameboard();
+    void GenerateRandomGameboard();
     void HandleGridState(gridState state);
 
     void StartupBot();
@@ -19,10 +19,14 @@ public:
     Grid grid;
     Bot bot;
     bool isBotRunning = false;
-    bool AutomationEnabled = false;
-    int attempts = 0;
 
 private:
     int taskIteration = 0;
+
+    // statistics
+    int attempts = 0;
+    int totalIterations = 0;
+    bool AutomationEnabled = false;
+    bool foundSolution = false;
     
 };

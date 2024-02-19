@@ -7,8 +7,8 @@ using namespace std;
 
 Grid::Grid()
 {
-    numRows = 10;
-    numCols = 10;
+    numRows = 12;
+    numCols = 11;
     cellSize = 30;
     colors = GetCellColors();
     Initialize();
@@ -154,19 +154,11 @@ bool Grid::HasCellAdjacentWithSameType(int row, int column)
 
 void Grid::DoRandomValidClick()
 {
-    vector<SCoord> testTargets = CoordsWithContent;
-    int index = testTargets.size()-1;
-    SCoord ClickTarget = testTargets[index];
-
-    while (!HasCellAdjacentWithSameType(ClickTarget.row, ClickTarget.column))
-    {
-        if (testTargets.size()-1 > 0)
-        {
-            index = rand()%max(testTargets.size()-1, 0);
-        }
-        ClickTarget = CoordsWithContent[index];
-        testTargets.erase(testTargets.begin() + index);
-    }
+    // can be a valid click?
+    if (ClickableCells.empty())
+        return;
+    
+    SCoord ClickTarget = ClickableCells[rand() % ClickableCells.size()];
     ClickCell(ClickTarget.row, ClickTarget.column);
     
     // add to sequence
@@ -198,15 +190,19 @@ void Grid::ClickCell(int row, int column)
 gridState Grid::GetGridState()
 {
     UpdateCoordsWithContent();
+    ClickableCells.clear();
     
     // check if coords with content has adjacent clickable cells of same type
     for (SCoord coords_with_content : CoordsWithContent)
     {
         if (HasCellAdjacentWithSameType(coords_with_content.row, coords_with_content.column))
         {
-            return inProgress;
+            ClickableCells.push_back(coords_with_content);
         }
     }
+    if(!ClickableCells.empty())
+        return inProgress;
+    
     return CoordsWithContent.empty() ? won : lost;
 }
 

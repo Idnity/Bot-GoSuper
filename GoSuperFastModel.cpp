@@ -13,8 +13,8 @@ int main()
 
     // window setup
     Color darkBlue = {44, 44, 127, 255};
-    InitWindow(301, 601, "GoSuperBot");
-    SetTargetFPS(0);
+    InitWindow(400, 600, "GoSuperBot");
+    SetTargetFPS(200);
     
     // Game loop
     while (!WindowShouldClose())

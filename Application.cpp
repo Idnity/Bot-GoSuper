@@ -28,8 +28,9 @@ void Application::HandleInput()
 
 void Application::IterateTask()
 {
-    taskIteration++;
+    totalIterations++;
     
+    taskIteration++;
     switch (taskIteration)
     {
     case 1:
@@ -60,10 +61,10 @@ void Application::StartAttempt()
     srand(attempts);
     grid.Initialize();
     grid.ClickSequence.clear();
-    FetchGameboard();
+    GenerateRandomGameboard();
 }
 
-void Application::FetchGameboard()
+void Application::GenerateRandomGameboard()
 {
     for (int row = 0; row < grid.numRows; row++)
     {
@@ -72,7 +73,7 @@ void Application::FetchGameboard()
             grid.grid2D[row][column] = 1 + rand() % 4;
         }
     }
-    
+    grid.CacheCurrentGameboard();
     grid.UpdateCoordsWithContent();
 }
 
@@ -88,6 +89,8 @@ void Application::HandleGridState(gridState state)
         StartAttempt();
         break;
     case won:
+        foundSolution = true;
+        AutomationEnabled = false;
         StartAttempt();
         //StartupBot();
         break;

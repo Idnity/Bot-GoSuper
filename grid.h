@@ -16,6 +16,7 @@ class Grid
 public:
     Grid();
     void Initialize();
+    void CacheCurrentGameboard();
     void Print();
     void Draw();
     
@@ -34,8 +35,12 @@ public:
     void UpdateCoordsWithContent();
 
     std::vector<SCoord> CoordsWithContent;
+    std::vector<SCoord> ClickableCells;
     std::vector<SCoord> ClickSequence;
-    int grid2D[20][10];
+
+    // standard game uses 12 rows and 11 columns
+    int grid2D[11][10];
+    int cachedGameboard[11][10];
     
     int numRows;
     int numCols;
