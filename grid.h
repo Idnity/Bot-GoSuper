@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <array>
 #include <raylib.h>
 #include <vector>
 
@@ -15,8 +16,7 @@ class Grid
 {
 public:
     Grid();
-    void Initialize();
-    void CacheCurrentGameboard();
+    void SetCurrentGrid(std::array<int, 132> array);
     void Print();
     void Draw();
     
@@ -39,13 +39,15 @@ public:
     std::vector<SCoord> ClickSequence;
 
     // standard game uses 12 rows and 11 columns
-    int grid2D[11][10];
-    int cachedGameboard[11][10];
+    std::array<int, 132> gridV2;
+    int GetGridElement(int row, int column);
+    int GetGridV2Index(int row, int column);
+    bool CellIsValid(int row, int column);
     
-    int numRows;
-    int numCols;
+    int numRows = 12;
+    int numCols = 11;
     
 private:
-    int cellSize;
+    int cellSize = 30;
     std::vector<Color> colors;
 };

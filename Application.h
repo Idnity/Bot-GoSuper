@@ -10,7 +10,7 @@ public:
     void HandleInput();
     void IterateTask();
     void StartAttempt();
-    void GenerateRandomGameboard();
+    void GenerateRandomBoard();
     void HandleGridState(gridState state);
 
     void StartupBot();
@@ -28,5 +28,6 @@ private:
     int totalIterations = 0;
     bool AutomationEnabled = false;
     bool foundSolution = false;
+    std::array<int, 132> CachedBoard;
     
 };

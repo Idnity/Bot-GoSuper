@@ -4,17 +4,13 @@
 
 int main()
 {
-    // game settings
-    int MaxSolverIterations = 2;
-
-    
     // Initialize Application
     Application application = Application();
 
     // window setup
     Color darkBlue = {44, 44, 127, 255};
     InitWindow(400, 600, "GoSuperBot");
-    SetTargetFPS(200);
+    SetTargetFPS(700);
     
     // Game loop
     while (!WindowShouldClose())

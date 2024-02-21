@@ -5,6 +5,7 @@
 Application::Application()
 {
     grid = Grid();
+    GenerateRandomBoard();
     StartAttempt();
 }
 
@@ -22,6 +23,10 @@ void Application::HandleInput()
         break;
     case KEY_S:
         IterateTask();
+        break;
+    case KEY_A:
+        GenerateRandomBoard();
+        break;
     default: ;
     }
 }
@@ -59,22 +64,16 @@ void Application::StartAttempt()
     attempts++;
     taskIteration = 0;
     srand(attempts);
-    grid.Initialize();
     grid.ClickSequence.clear();
-    GenerateRandomGameboard();
+    grid.SetCurrentGrid(CachedBoard);
 }
 
-void Application::GenerateRandomGameboard()
+void Application::GenerateRandomBoard()
 {
-    for (int row = 0; row < grid.numRows; row++)
+    for (int i = 0; i < CachedBoard.size(); ++i)
     {
-        for (int column = 0; column < grid.numCols; column++)
-        {
-            grid.grid2D[row][column] = 1 + rand() % 4;
-        }
+        CachedBoard[i] = 1 + rand() % 4;
     }
-    grid.CacheCurrentGameboard();
-    grid.UpdateCoordsWithContent();
 }
 
 void Application::HandleGridState(gridState state)

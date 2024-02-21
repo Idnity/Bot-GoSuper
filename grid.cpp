@@ -7,33 +7,23 @@ using namespace std;
 
 Grid::Grid()
 {
-    numRows = 12;
-    numCols = 11;
-    cellSize = 30;
     colors = GetCellColors();
-    Initialize();
+    gridV2.fill(0);
 }
 
-void Grid::Initialize()
+void Grid::SetCurrentGrid(std::array<int, 132> array)
 {
-    for (int row = 0; row < numRows; row++)
-    {
-        for (int column = 0; column < numCols; column++)
-        {
-            grid2D[row][column] = 0;
-        }
-    }
+    gridV2 = array;
+    UpdateCoordsWithContent();
 }
 
 void Grid::Print()
 {
-    for (int row = 0; row < numRows; row++)
+    for (int i = 0; i < gridV2.size(); ++i)
     {
-        for (int column = 0; column < numCols; column++)
-        {
-            std::cout << grid2D[row][column] << " ";
-        }
-        std::cout << std::endl;
+        std::cout << gridV2[i] << " ";
+        if (i%numRows == numRows-1)
+            std::cout << '\n';
     }
 }
 
@@ -43,7 +33,7 @@ void Grid::Draw()
     {
         for (int column = 0; column < numCols; column++)
         {
-            int cellValue = grid2D[row][column];
+            int cellValue = GetGridElement(row, column);
             DrawRectangle(column * cellSize + 1, row * cellSize + 1, cellSize - 1, cellSize - 1, colors[cellValue]);
         }
     }
@@ -51,7 +41,7 @@ void Grid::Draw()
 
 bool Grid::IsCellEmpty(int row, int column)
 {
-    if (grid2D[row][column] == 0)
+    if (GetGridElement(row, column) == 0)
     {
         return true;
     }
@@ -62,7 +52,7 @@ bool Grid::IsColumnEmpty(int column)
 {
     for (int row = numRows - 1; row >= 0; row--)
     {
-        if (grid2D[row][column] != 0)
+        if (GetGridElement(row, column) != 0)
         {
             return false;
         }
@@ -77,7 +67,7 @@ bool Grid::PushGridDown()
     {
         for (int column = 0; column < numCols; column++)
         {
-            if (grid2D[row][column] != 0)
+            if (GetGridElement(row, column) != 0)
             {
                 if (PushItemDown(row, column))
                     didChange = true;
@@ -90,26 +80,28 @@ bool Grid::PushGridDown()
 bool Grid::PushGridRight()
 {
     int emptyColumns = 0;
+    bool hasMovedColumn = false;
     for (int column = numCols - 1; column >= 0; column--)
     {
         if (IsColumnEmpty(column))
         {
-           emptyColumns++;
+            emptyColumns++;
         }
         else if (emptyColumns > 0)
         {
             MoveColumnRight(column, emptyColumns);
+            hasMovedColumn = true;
         }
     }
-    return emptyColumns > 0;
+    return hasMovedColumn;
 }
 
 void Grid::MoveColumnRight(int column, const int numCols)
 {
     for (int row = 0; row < numRows; ++row)
     {
-        grid2D[row][column + numCols] = grid2D[row][column];
-        grid2D[row][column] = 0;
+        gridV2[GetGridV2Index(row, column + numCols)] = GetGridElement(row, column);
+        gridV2[GetGridV2Index(row, column)] = 0;
     }
 }
 
@@ -118,7 +110,7 @@ bool Grid::PushItemDown(int row, int column)
     int unoccupiedRow = row;
     
     // find the furthest unoccupied spot
-    while (IsCellEmpty(unoccupiedRow + 1, column))
+    while (CellIsValid(unoccupiedRow + 1, column) && IsCellEmpty(unoccupiedRow + 1, column))
     {
         unoccupiedRow++;
     }
@@ -126,8 +118,8 @@ bool Grid::PushItemDown(int row, int column)
     // update item
     if(unoccupiedRow != row)
     {
-        grid2D[unoccupiedRow][column] = grid2D[row][column];
-        grid2D[row][column] = 0;
+        gridV2[GetGridV2Index(unoccupiedRow, column)] = GetGridElement(row, column);
+        gridV2[GetGridV2Index(row, column)] = 0;
         return true;
     }
     return false;
@@ -135,18 +127,18 @@ bool Grid::PushItemDown(int row, int column)
 
 bool Grid::HasCellAdjacentWithSameType(int row, int column)
 {
-    int typeOfCell = grid2D[row][column];
+    int typeOfCell = GetGridElement(row, column);
     
     // check horizontal cells and click if same type
-    if(column+1 < numCols && grid2D[row][column+1] == typeOfCell)
+    if(column+1 < numCols && GetGridElement(row, column + 1) == typeOfCell)
         return true;
-    if(column-1 >=0 && grid2D[row][column-1] == typeOfCell)
+    if(column-1 >= 0 && GetGridElement(row, column - 1) == typeOfCell)
         return true;
     
     // check vertical cells and click if same type
-    if(row+1 < numRows && grid2D[row+1][column] == typeOfCell)
+    if(row+1 < numRows && GetGridElement(row + 1, column) == typeOfCell)
         return true;
-    if(row-1 >=0 && grid2D[row-1][column] == typeOfCell)
+    if(row-1 >= 0 && GetGridElement(row - 1, column) == typeOfCell)
         return true;
     
     return false;
@@ -167,23 +159,23 @@ void Grid::DoRandomValidClick()
 
 void Grid::ClickCell(int row, int column)
 {
-    int typeOfCell = grid2D[row][column];
+    int typeOfCell = GetGridElement(row, column);
     if (typeOfCell == 0)
         return;
 
     // clear cell
-    grid2D[row][column] = 0;
+    gridV2[GetGridV2Index(row, column)] = 0;
     
     // check vertical cells and click if same type
-    if(row+1 >=0 && row+1 < numRows && grid2D[row+1][column] == typeOfCell)
+    if(row+1 >=0 && row+1 < numRows && GetGridElement(row + 1, column) == typeOfCell)
         ClickCell(row+1, column);
-    if(row-1 >=0 && row-1 < numRows && grid2D[row-1][column] == typeOfCell)
+    if(row-1 >=0 && row-1 < numRows && GetGridElement(row - 1, column) == typeOfCell)
         ClickCell(row-1, column);
 
     // check horizontal cells and click if same type
-    if(column+1 >=0 && column+1 < numCols && grid2D[row][column+1] == typeOfCell)
+    if(column+1 >=0 && column+1 < numCols && GetGridElement(row, column + 1) == typeOfCell)
         ClickCell(row, column+1);
-    if(column-1 >=0 && column-1 < numCols && grid2D[row][column-1] == typeOfCell)
+    if(column-1 >=0 && column-1 < numCols && GetGridElement(row, column - 1) == typeOfCell)
         ClickCell(row, column-1);
 }
 
@@ -215,10 +207,26 @@ void Grid::UpdateCoordsWithContent()
     {
         for (int column = 0; column < numCols; ++column)
         {
-            if (grid2D[row][column] != 0)
+            if (GetGridElement(row, column) != 0)
             {
                 CoordsWithContent.push_back(SCoord{row, column});
             }
         }
     }
+}
+
+int Grid::GetGridElement(int row, int column)
+{
+    return gridV2[GetGridV2Index(row, column)];
+}
+
+int Grid::GetGridV2Index(int row, int column)
+{
+    return row * (numRows-1) + column;
+}
+
+bool Grid::CellIsValid(int row, int column)
+{
+    return  row < numRows && row >= 0 &&
+            column < numCols && column >= 0;
 }
