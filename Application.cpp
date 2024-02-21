@@ -26,6 +26,7 @@ void Application::HandleInput()
         break;
     case KEY_A:
         GenerateRandomBoard();
+        StartAttempt();
         break;
     default: ;
     }
