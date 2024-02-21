@@ -34,8 +34,16 @@ void Application::HandleInput()
 
 void Application::IterateTask()
 {
-    totalIterations++;
+    // if solution found, restart
+    if (foundSolution)
+    {
+        GenerateRandomBoard();
+        StartAttempt();
+        foundSolution = false;
+        return;
+    }
     
+    totalIterations++;
     taskIteration++;
     switch (taskIteration)
     {
@@ -91,7 +99,6 @@ void Application::HandleGridState(gridState state)
     case won:
         foundSolution = true;
         AutomationEnabled = false;
-        StartAttempt();
         //StartupBot();
         break;
     }

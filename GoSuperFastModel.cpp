@@ -1,6 +1,7 @@
 #include <iostream>
 #include <raylib.h>
 #include "Application.h"
+#include "colors.h"
 
 int main()
 {
@@ -11,7 +12,6 @@ int main()
     Font font = LoadFontEx("Font/monogram.ttf", 64, 0, 0);
 
     // window setup
-    Color darkBlue = {44, 44, 127, 255};
     InitWindow(530, 380, "GoSuperBot");
     SetTargetFPS(700);
     
@@ -22,7 +22,11 @@ int main()
         ClearBackground(darkBlue);
 
         // UI
+        //text tutorial for shortcuts space, a, s
+        //presentable name
         DrawTextEx(font, "Iterations", {365, 15}, 28, 2, WHITE);
+        DrawTextEx(font, "Attempts", {365, 165}, 28, 2, WHITE);
+        DrawRectangleRounded({320, 55, 170, 60}, 0.3f, 6, lightBlue);
         
         application.tick();
         EndDrawing();
@@ -30,7 +34,7 @@ int main()
     CloseWindow();
 
     // unload
-    //UnloadFont(font);
+    UnloadFont(font);
     
     // std::cout << "Welcome to turbo booster that probably will get your account banned!" << std::endl
     // << "Click top left corner -> ";

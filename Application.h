@@ -28,6 +28,7 @@ private:
     int totalIterations = 0;
     bool AutomationEnabled = false;
     bool foundSolution = false;
+    int currentBestScore = 0;
     std::array<int, 132> CachedBoard;
     
 };
