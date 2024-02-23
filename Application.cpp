@@ -4,9 +4,20 @@
 
 Application::Application()
 {
+    // audio setup
+    InitAudioDevice();
+    //sound = LoadSound("Sounds/rotate.mp3");
+    //PlaySound(sound);
+    
     grid = Grid();
     GenerateRandomBoard();
     StartAttempt();
+}
+
+Application::~Application()
+{
+    //UnloadSound(sound);
+    CloseAudioDevice();
 }
 
 void Application::Draw()

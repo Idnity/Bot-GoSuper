@@ -6,6 +6,7 @@ class Application
 {
 public:
     Application();
+    ~Application();
     void Draw();
     void HandleInput();
     void IterateTask();
