@@ -12,7 +12,7 @@ int main()
     Font font = LoadFontEx("Font/monogram.ttf", 64, 0, 0);
 
     // window setup
-    InitWindow(530, 380, "GoSuperBot");
+    InitWindow(530, 380, "GoSuperFastModel - bot");
     SetTargetFPS(700);
     
     // Game loop
@@ -24,8 +24,7 @@ int main()
         // UI
         //text tutorial for shortcuts space, a, s
         //presentable name
-        DrawTextEx(font, "Iterations", {365, 15}, 28, 2, WHITE);
-        DrawTextEx(font, "Attempts", {365, 165}, 28, 2, WHITE);
+        DrawTextEx(font, "Stats - Iterations, attempts", {365, 15}, 28, 2, WHITE);
         DrawRectangleRounded({320, 55, 170, 60}, 0.3f, 6, lightBlue);
         
         application.tick();
