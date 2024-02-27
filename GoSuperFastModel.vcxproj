@@ -163,6 +163,7 @@
     <ClCompile Include="GoSuperFastModel.cpp" />
     <ClCompile Include="grid.cpp" />
     <ClCompile Include="SCoord.cpp" />
+    <ClCompile Include="WindowSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="colors.h" />
     <ClInclude Include="grid.h" />
     <ClInclude Include="SCoord.h" />
+    <ClInclude Include="WindowSettings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

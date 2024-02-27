@@ -2,7 +2,7 @@
 
 #include "Bot.h"
 
-Application::Application()
+Application::Application(WindowSettings *window_settings) : window_settings_(window_settings)
 {
     // audio setup
     InitAudioDevice();
@@ -38,6 +38,15 @@ void Application::HandleInput()
     case KEY_A:
         GenerateRandomBoard();
         StartAttempt();
+        break;
+    case KEY_ONE:
+        SetTargetFPS(10);
+        break;
+    case KEY_TWO:
+        SetTargetFPS(200);
+        break;
+    case KEY_THREE:
+        SetTargetFPS(0);
         break;
     default: ;
     }
