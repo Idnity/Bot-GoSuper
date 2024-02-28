@@ -57,9 +57,10 @@ void Application::IterateTask()
     // if solution found, restart
     if (foundSolution)
     {
+        foundSolution = false;
+        bestScore = -1;
         GenerateRandomBoard();
         StartAttempt();
-        foundSolution = false;
         return;
     }
     
@@ -80,7 +81,7 @@ void Application::IterateTask()
         HandleGridState(grid.GetGridState());
         break;
     case 4:
-        grid.DoRandomValidClick();
+        DoRandomValidClick();
         break;
     default:
         taskIteration = 0;
@@ -93,7 +94,7 @@ void Application::StartAttempt()
     attempts++;
     taskIteration = 0;
     srand(attempts);
-    grid.ClickSequence.clear();
+    currentClickSequence.clear();
     grid.SetCurrentGrid(CachedBoard);
 }
 
@@ -113,15 +114,34 @@ void Application::HandleGridState(gridState state)
         IterateTask();
         break;
     case lost:
-        // store score if best
+        if (grid.CoordsWithContent.size() < bestScore || bestScore < 0)
+        {
+            bestClickSequence = currentClickSequence;
+            bestScore = grid.CoordsWithContent.size();
+        }
         StartAttempt();
         break;
     case won:
+        bestClickSequence = currentClickSequence;
+        bestScore = grid.CoordsWithContent.size();
         foundSolution = true;
         AutomationEnabled = false;
         //StartupBot();
         break;
     }
+}
+
+void Application::DoRandomValidClick()
+{
+    // can be a valid click?
+    if (grid.ClickableCells.empty())
+        return;
+    
+    SCoord ClickTarget = grid.ClickableCells[rand() % grid.ClickableCells.size()];
+    grid.ClickCell(ClickTarget.row, ClickTarget.column);
+    
+    // add to sequence
+    currentClickSequence.push_back(ClickTarget);
 }
 
 void Application::StartupBot()
@@ -138,6 +158,4 @@ void Application::tick()
     {
         IterateTask();
     }
-    
-    Draw();
 }

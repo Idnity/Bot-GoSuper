@@ -14,6 +14,7 @@ public:
     void StartAttempt();
     void GenerateRandomBoard();
     void HandleGridState(gridState state);
+    void DoRandomValidClick();
 
     void StartupBot();
     void tick();
@@ -29,7 +30,9 @@ public:
     int totalIterations = 0;
     bool AutomationEnabled = false;
     bool foundSolution = false;
-    int currentBestScore = 0;
+    int bestScore = -1;
+    std::vector<SCoord> currentClickSequence;
+    std::vector<SCoord> bestClickSequence;
 private:
 
     std::array<int, 132> CachedBoard;

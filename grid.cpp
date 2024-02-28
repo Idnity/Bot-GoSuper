@@ -144,19 +144,6 @@ bool Grid::HasCellAdjacentWithSameType(int row, int column)
     return false;
 }
 
-void Grid::DoRandomValidClick()
-{
-    // can be a valid click?
-    if (ClickableCells.empty())
-        return;
-    
-    SCoord ClickTarget = ClickableCells[rand() % ClickableCells.size()];
-    ClickCell(ClickTarget.row, ClickTarget.column);
-    
-    // add to sequence
-    ClickSequence.push_back(ClickTarget);
-}
-
 void Grid::ClickCell(int row, int column)
 {
     int typeOfCell = GetGridElement(row, column);

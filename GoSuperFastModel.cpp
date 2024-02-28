@@ -46,21 +46,31 @@ int main()
         }
 
         //text tutorial keybindings
-        DrawRectangleRounded({350, 75, 200, 155}, 0.3f, 6, lightBlue);
+        DrawRectangleRounded({350, 75, 200, 165}, 0.3f, 6, lightBlue);
         DrawTextEx(font, "Space - toggle auto\n"
                          "1-3 - Sim speed\n"
                          "A - Random board\n"
                          "S - Iterate\n"
                          "D - Bounds (twice)\n"
-                         "ESC - CLOSE", {365, 85}, 16, 2, WHITE);
+                         "ESC - CLOSE", {365, 90}, 16, 2, WHITE);
         
         //Stats - Iterations, attempts
-        DrawRectangleRounded({350, 245, 200, 155}, 0.3f, 6, lightBlue);
-        std::string iterations_string = std::to_string(application.totalIterations);
-        DrawTextEx(font, iterations_string.c_str(), {365, 255}, 16, 2, WHITE);
+        DrawRectangleRounded({350, 250, 200, 155}, 0.3f, 6, lightBlue);
+        
+        std::string stats_string = "Iterations= ";
+        stats_string.append(std::to_string(application.totalIterations));
+        stats_string.append("\nAttempts= ");
+        stats_string.append(std::to_string(application.attempts));
+        stats_string.append("\nLowestSolution= ");
+        stats_string.append(std::to_string(application.bestScore));
+        stats_string.append("\nAutomation= ");
+        stats_string.append(application.AutomationEnabled ? "true" : "false");
+        
+        DrawTextEx(font, stats_string.c_str(), {365, 265}, 16, 2, WHITE);
 
         
         application.tick();
+        application.Draw();
         EndDrawing();
     }
     CloseWindow();
@@ -68,10 +78,5 @@ int main()
     // unload
     UnloadFont(font);
     
-    // std::cout << "Welcome to turbo booster that probably will get your account banned!" << std::endl
-    // << "Click top left corner -> ";
-
-    
     return 0;
 }
-

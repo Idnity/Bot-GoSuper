@@ -30,14 +30,12 @@ public:
     bool PushItemDown(int row, int column);
     bool HasCellAdjacentWithSameType(int row, int column);
 
-    void DoRandomValidClick();
     void ClickCell(int row, int column);
     gridState GetGridState();
     void UpdateCoordsWithContent();
 
     std::vector<SCoord> CoordsWithContent;
     std::vector<SCoord> ClickableCells;
-    std::vector<SCoord> ClickSequence;
 
     // standard game uses 12 rows and 11 columns
     std::array<int, 132> gridV2;
