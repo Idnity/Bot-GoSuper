@@ -1,5 +1,9 @@
 ﻿#include "Bot.h"
+
+namespace WinAPI
+{
 #include <Windows.h>
+}
 
 Bot::Bot()
 {
@@ -9,24 +13,63 @@ void Bot::tick()
 {
 }
 
-void Bot::FetchScreenBoardToArray(std::array<int, 132> array)
+std::array<int, 132> Bot::GetScreenBoardFromBounds()
+{
+    std::array<int, 132> result = {};
+
+
+    return result;
+}
+
+int Bot::GetTypeFromPixel(SCoord coord)
 {
     // Get the screen DC (Device Context)
-    HDC hdcScreen = GetDC(NULL);
+    WinAPI::HDC hdcScreen = WinAPI::GetDC(NULL);
 
     // Define the screen coordinates of the pixel you want to get the color of
     int x = 100; // x-coordinate
     int y = 50;  // y-coordinate
 
     // Get the color of the pixel at (x, y)
-    COLORREF color = GetPixel(hdcScreen, x, y);
+    WinAPI::COLORREF color = GetPixel(hdcScreen, x, y);
 
     // Release the screen DC
     ReleaseDC(NULL, hdcScreen);
+    
+    return 0;
+}
 
-    // Extract the RGB components from the COLORREF value
-    int r = GetRValue(color);
-    int g = GetGValue(color);
-    int b = GetBValue(color);
+void Bot::SetBounds()
+{
+    WinAPI::POINT cursorPos;
+    GetCursorPos(&cursorPos);
+    if (topLeftBoardX == 0 && topLeftBoardY == 0)
+    {
+        topLeftBoardX = cursorPos.x;
+        topLeftBoardY = cursorPos.y;
+    }
+    else
+    {
+        rightBottomBoardX = cursorPos.x;
+        rightBottomBoardY = cursorPos.y;
+    }
+    
+}
 
+void Bot::ClearBounds()
+{
+    topLeftBoardX = 0;
+    topLeftBoardY = 0;
+    rightBottomBoardX = 0;
+    rightBottomBoardY = 0;
+}
+
+
+bool Bot::IsBoundsSet()
+{
+    return
+    topLeftBoardX != 0 &&
+    topLeftBoardY != 0 &&
+    rightBottomBoardX != 0 &&
+    rightBottomBoardY != 0;
 }

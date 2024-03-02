@@ -1,6 +1,8 @@
 ﻿#include "Application.h"
 
-#include "Bot.h"
+#include <iostream>
+
+//#include "Bot.h"
 
 Application::Application(WindowSettings *window_settings) : window_settings_(window_settings)
 {
@@ -38,6 +40,17 @@ void Application::HandleInput()
     case KEY_A:
         GenerateRandomBoard();
         StartAttempt();
+        break;
+    case KEY_D:
+        grid.SetCurrentGrid(std::array<int, 132>{});
+        if (bot.IsBoundsSet())
+        {
+            bot.ClearBounds();
+        }
+        else
+        {
+            bot.SetBounds();
+        }
         break;
     case KEY_ONE:
         SetTargetFPS(10);

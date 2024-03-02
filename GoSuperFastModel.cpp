@@ -65,6 +65,14 @@ int main()
         stats_string.append(std::to_string(application.bestScore));
         stats_string.append("\nAutomation= ");
         stats_string.append(application.AutomationEnabled ? "true" : "false");
+        stats_string.append("\nBounds= ");
+        stats_string.append(std::to_string(application.bot.topLeftBoardX));
+        stats_string.append(".");
+        stats_string.append(std::to_string(application.bot.topLeftBoardY));
+        stats_string.append("\n");
+        stats_string.append(std::to_string(application.bot.rightBottomBoardX));
+        stats_string.append(".");
+        stats_string.append(std::to_string(application.bot.rightBottomBoardY));
         
         DrawTextEx(font, stats_string.c_str(), {365, 265}, 16, 2, WHITE);
 

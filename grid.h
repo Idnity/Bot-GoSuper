@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "SCoord.h"
-#include "WindowSettings.h"
 
 enum gridState
 {
