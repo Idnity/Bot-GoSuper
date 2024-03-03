@@ -6,13 +6,11 @@
 #include "colors.h"
 #include "WindowSettings.h"
 
-enum AppState { SetBounds, Simulating, Executing };
 
 int main()
 {
     // Initialize Application
     WindowSettings window_settings{560, 420};
-    AppState app_state = SetBounds;
     Application application = Application(&window_settings);
     
     // loading
@@ -32,13 +30,16 @@ int main()
         DrawTextEx(font, "~ Go Turbo Model v1 ~", {20, 13}, 28, 2, WHITE);
         
         DrawRectangleRounded({350, 13, 200, 50}, 0.3f, 6, lightBlue);
-        switch (app_state)
+        switch (application.app_state)
         {
         case SetBounds:
             DrawTextEx(font, "Set Bounds", {375, 25}, 26, 2, RED);
             break;
-        case Simulating:
-            DrawTextEx(font, "Simulating", {385, 25}, 26, 2, WHITE);
+        case Searching:
+            DrawTextEx(font, "Searching..", {380, 25}, 26, 2, ORANGE);
+            break;
+        case Solved:
+            DrawTextEx(font, "SOLVED!", {395, 25}, 26, 2, YELLOW);
             break;
         case Executing:
             DrawTextEx(font, "Executing", {385, 25}, 26, 2, GREEN);

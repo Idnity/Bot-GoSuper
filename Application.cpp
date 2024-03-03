@@ -6,14 +6,13 @@
 
 Application::Application(WindowSettings *window_settings) : window_settings_(window_settings)
 {
+    app_state = SetBounds;
     // audio setup
     InitAudioDevice();
     //sound = LoadSound("Sounds/rotate.mp3");
     //PlaySound(sound);
     
     grid = Grid();
-    GenerateRandomBoard();
-    StartAttempt();
 }
 
 Application::~Application()
@@ -46,6 +45,7 @@ void Application::HandleInput()
         if (bot.IsBoundsSet())
         {
             bot.ClearBounds();
+            app_state = SetBounds;
         }
         else
         {
@@ -55,6 +55,7 @@ void Application::HandleInput()
                 // find board from screen, and cache it
                 grid.SetCurrentGrid(bot.GetScreenBoardFromBounds());
                 CachedBoard = grid.gridV2;
+                app_state = Searching;
             }
         }
         break;
@@ -74,12 +75,9 @@ void Application::HandleInput()
 void Application::IterateTask()
 {
     // if solution found, restart
-    if (foundSolution)
+    if (app_state == Solved)
     {
-        foundSolution = false;
-        bestScore = -1;
-        //GenerateRandomBoard();
-        StartAttempt();
+        StartupBot();
         return;
     }
     
@@ -110,6 +108,7 @@ void Application::IterateTask()
 
 void Application::StartAttempt()
 {
+    app_state = Searching;
     attempts++;
     taskIteration = 0;
     srand(attempts);
@@ -141,9 +140,9 @@ void Application::HandleGridState(gridState state)
         StartAttempt();
         break;
     case won:
+        app_state = Solved;
         bestClickSequence = currentClickSequence;
         bestScore = grid.CoordsWithContent.size();
-        foundSolution = true;
         AutomationEnabled = false;
         //StartupBot();
         break;
@@ -165,13 +164,13 @@ void Application::DoRandomValidClick()
 
 void Application::StartupBot()
 {
-    isBotRunning = true;
+    app_state = Executing;
 }
 
 void Application::tick()
 {
     HandleInput();
-    if (isBotRunning)
+    if (app_state == Executing)
         bot.tick();
     if (AutomationEnabled)
     {

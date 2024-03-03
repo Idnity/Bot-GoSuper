@@ -3,6 +3,8 @@
 #include "grid.h"
 #include "WindowSettings.h"
 
+enum AppState { SetBounds, Searching, Solved, Executing };
+
 class Application
 {
 public:
@@ -21,15 +23,14 @@ public:
 
     Grid grid;
     Bot bot;
-    bool isBotRunning = false;
     WindowSettings* window_settings_;
+    AppState app_state;
 
     // statistics
     int attempts = 0;
     int taskIteration = 0;
     int totalIterations = 0;
     bool AutomationEnabled = false;
-    bool foundSolution = false;
     int bestScore = -1;
     std::vector<SCoord> currentClickSequence;
     std::vector<SCoord> bestClickSequence;
