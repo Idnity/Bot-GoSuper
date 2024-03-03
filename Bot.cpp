@@ -1,9 +1,7 @@
 ﻿#include "Bot.h"
 
-namespace WinAPI
-{
+#include <vector>
 #include <Windows.h>
-}
 
 Bot::Bot()
 {
@@ -17,31 +15,43 @@ std::array<int, 132> Bot::GetScreenBoardFromBounds()
 {
     std::array<int, 132> result = {};
 
+    // Get the screen DC (Device Context)
+    HDC hdcScreen = GetDC(NULL);
+    
+    std::vector<COLORREF> foundColors = {};
+    
+    for (int row = 0; row < numRows; ++row)
+    {
+        for (int col = 0; col < numCols; ++col)
+        {
+            // Get the color of the pixel at (x, y)
+            int x = GetColumnToScreenPos(col);
+            int y = GetRowToScreenPos(row);
+            COLORREF foundColor = GetPixel(hdcScreen, x, y);
+            
+            auto it = std::find(foundColors.begin(), foundColors.end(), foundColor);
+            if (it != foundColors.end())
+            {
+                int index = it - foundColors.begin();
+                result[row * (numRows-1) + col] = index + 1;
+            }
+            else if (foundColors.size() < 7)
+            {
+                foundColors.push_back(foundColor);
+                result[row * (numRows-1) + col] = foundColors.size();
+            }
+        }
+    }
+
+    // Release the screen DC
+    ReleaseDC(NULL, hdcScreen);
 
     return result;
 }
 
-int Bot::GetTypeFromPixel(SCoord coord)
-{
-    // Get the screen DC (Device Context)
-    WinAPI::HDC hdcScreen = WinAPI::GetDC(NULL);
-
-    // Define the screen coordinates of the pixel you want to get the color of
-    int x = 100; // x-coordinate
-    int y = 50;  // y-coordinate
-
-    // Get the color of the pixel at (x, y)
-    WinAPI::COLORREF color = GetPixel(hdcScreen, x, y);
-
-    // Release the screen DC
-    ReleaseDC(NULL, hdcScreen);
-    
-    return 0;
-}
-
 void Bot::SetBounds()
 {
-    WinAPI::POINT cursorPos;
+    POINT cursorPos;
     GetCursorPos(&cursorPos);
     if (topLeftBoardX == 0 && topLeftBoardY == 0)
     {
@@ -72,4 +82,16 @@ bool Bot::IsBoundsSet()
     topLeftBoardY != 0 &&
     rightBottomBoardX != 0 &&
     rightBottomBoardY != 0;
+}
+
+int Bot::GetColumnToScreenPos(int column)
+{
+    int columnWidth = (rightBottomBoardX - topLeftBoardX) / numCols;
+    return columnWidth * column + topLeftBoardX;
+}
+
+int Bot::GetRowToScreenPos(int row)
+{
+    int rowWidth = (rightBottomBoardY - topLeftBoardY) / numRows;
+    return rowWidth * row + topLeftBoardY;
 }

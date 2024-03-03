@@ -50,6 +50,12 @@ void Application::HandleInput()
         else
         {
             bot.SetBounds();
+            if(bot.IsBoundsSet())
+            {
+                // find board from screen, and cache it
+                grid.SetCurrentGrid(bot.GetScreenBoardFromBounds());
+                CachedBoard = grid.gridV2;
+            }
         }
         break;
     case KEY_ONE:
@@ -72,7 +78,7 @@ void Application::IterateTask()
     {
         foundSolution = false;
         bestScore = -1;
-        GenerateRandomBoard();
+        //GenerateRandomBoard();
         StartAttempt();
         return;
     }

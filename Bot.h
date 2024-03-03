@@ -9,10 +9,12 @@ public:
     Bot();
     void tick();
     std::array<int, 132> GetScreenBoardFromBounds();
-    int GetTypeFromPixel(SCoord coord);
+    int GetTypeFromPixel(int row, int col);
     void SetBounds();
     void ClearBounds();
     bool IsBoundsSet();
+    int GetColumnToScreenPos(int column);
+    int GetRowToScreenPos(int row);
     
     int topLeftBoardX = 0;
     int topLeftBoardY = 0;
@@ -26,5 +28,7 @@ private:
     int numCols = 11;
     
 };
+
+
 
 
