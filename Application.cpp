@@ -77,7 +77,8 @@ void Application::IterateTask()
     // if solution found, restart
     if (app_state == Solved)
     {
-        StartupBot();
+        app_state = Executing;
+        bot.startupBot(bestClickSequence);
         return;
     }
     
@@ -160,11 +161,6 @@ void Application::DoRandomValidClick()
     
     // add to sequence
     currentClickSequence.push_back(ClickTarget);
-}
-
-void Application::StartupBot()
-{
-    app_state = Executing;
 }
 
 void Application::tick()

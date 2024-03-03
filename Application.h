@@ -18,7 +18,6 @@ public:
     void HandleGridState(gridState state);
     void DoRandomValidClick();
 
-    void StartupBot();
     void tick();
 
     Grid grid;

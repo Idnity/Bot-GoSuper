@@ -11,6 +11,12 @@ void Bot::tick()
 {
 }
 
+void Bot::startupBot(std::vector<SCoord> BestClickSequence)
+{
+    clickSequence = BestClickSequence;
+    clickIndex = 0;
+}
+
 std::array<int, 132> Bot::GetScreenBoardFromBounds()
 {
     std::array<int, 132> result = {};
