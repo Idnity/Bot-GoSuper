@@ -27,17 +27,33 @@ std::array<int, 132> Bot::GetScreenBoardFromBounds()
             // Get the color of the pixel at (x, y)
             int x = GetColumnToScreenPos(col);
             int y = GetRowToScreenPos(row);
-            COLORREF foundColor = GetPixel(hdcScreen, x, y);
-            
-            auto it = std::find(foundColors.begin(), foundColors.end(), foundColor);
-            if (it != foundColors.end())
+            COLORREF PixelColor = GetPixel(hdcScreen, x, y);
+
+            float tolerance = 30;
+
+            auto isEqual = [tolerance](float a, float b) {
+                return std::abs(a - b) < tolerance;
+            };
+
+            bool foundExistingColor = false;
+
+            // find color with small variation acceptance
+            for (int i = 0; i < foundColors.size(); ++i)
             {
-                int index = it - foundColors.begin();
-                result[row * (numRows-1) + col] = index + 1;
+                if (isEqual(GetRValue(foundColors[i]), GetRValue(PixelColor)) &&
+                    isEqual(GetGValue(foundColors[i]), GetGValue(PixelColor)) &&
+                    isEqual(GetBValue(foundColors[i]), GetBValue(PixelColor)))
+                {
+                    result[row * (numRows-1) + col] = i + 1;
+                    foundExistingColor = true;
+                    break;
+                }
             }
-            else if (foundColors.size() < 7)
+            
+            // if not found, register new color type and add
+            if (!foundExistingColor && foundColors.size() < 7)
             {
-                foundColors.push_back(foundColor);
+                foundColors.push_back(PixelColor);
                 result[row * (numRows-1) + col] = foundColors.size();
             }
         }
@@ -86,12 +102,12 @@ bool Bot::IsBoundsSet()
 
 int Bot::GetColumnToScreenPos(int column)
 {
-    int columnWidth = (rightBottomBoardX - topLeftBoardX) / numCols;
-    return columnWidth * column + topLeftBoardX;
+    double columnWidth = static_cast<double>(rightBottomBoardX - topLeftBoardX) / static_cast<double>(numCols - 1);
+    return static_cast<int>(round(columnWidth * column + topLeftBoardX));
 }
 
 int Bot::GetRowToScreenPos(int row)
 {
-    int rowWidth = (rightBottomBoardY - topLeftBoardY) / numRows;
-    return rowWidth * row + topLeftBoardY;
+    double rowWidth = static_cast<double>((rightBottomBoardY - topLeftBoardY)) / static_cast<double>((numRows - 1));
+    return static_cast<int>(round(rowWidth * row + topLeftBoardY));
 }
