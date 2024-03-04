@@ -3,7 +3,7 @@
 #include "grid.h"
 #include "WindowSettings.h"
 
-enum AppState { SetBounds, Searching, Solved, Executing };
+enum AppState { SetBounds, Searching, Solved, Executing, Paused };
 
 class Application
 {

@@ -44,6 +44,9 @@ int main()
         case Executing:
             DrawTextEx(font, "Executing", {385, 25}, 26, 2, GREEN);
             break;
+        case Paused:
+            DrawTextEx(font, "- Paused -", {385, 25}, 26, 2, YELLOW);
+            break;
         }
 
         //text tutorial keybindings

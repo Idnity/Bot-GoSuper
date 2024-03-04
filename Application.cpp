@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-//#include "Bot.h"
 
 Application::Application(WindowSettings *window_settings) : window_settings_(window_settings)
 {
@@ -144,7 +143,7 @@ void Application::HandleGridState(gridState state)
         app_state = Solved;
         bestClickSequence = currentClickSequence;
         bestScore = grid.CoordsWithContent.size();
-        AutomationEnabled = false;
+        //AutomationEnabled = false;
         //StartupBot();
         break;
     }
@@ -167,8 +166,21 @@ void Application::tick()
 {
     HandleInput();
     if (app_state == Executing)
-        bot.tick();
-    if (AutomationEnabled)
+    {
+        bot.tick(GetFrameTime());
+        if (bot.HasMovedCursor())
+        {
+            app_state = Paused;
+        }
+        else if (bot.RequestingNewBoard)
+        {
+            // find board from screen, and cache it
+            grid.SetCurrentGrid(bot.GetScreenBoardFromBounds());
+            CachedBoard = grid.gridV2;
+            StartAttempt();
+        }
+    }
+    else if (AutomationEnabled)
     {
         IterateTask();
     }
