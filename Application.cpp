@@ -86,18 +86,14 @@ void Application::IterateTask()
     switch (taskIteration)
     {
     case 1:
-        if (!grid.PushGridDown())
-            IterateTask();
+        grid.PushGridDown();
+        grid.PushGridRight();
         break;
     case 2:
-        if (!grid.PushGridRight())
-            IterateTask();
-        break;
-    case 3:
         // could use check grid to optimize next click if in progress
         HandleGridState(grid.GetGridState());
         break;
-    case 4:
+    case 3:
         DoRandomValidClick();
         break;
     default:

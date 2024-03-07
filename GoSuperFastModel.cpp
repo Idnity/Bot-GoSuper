@@ -18,7 +18,7 @@ int main()
 
     // window setup
     InitWindow(window_settings.width, window_settings.height, "GoSuperFastModel - bot");
-    SetTargetFPS(300);
+    SetTargetFPS(0);
     
     // Game loop
     while (!WindowShouldClose())
@@ -29,7 +29,7 @@ int main()
         // UI
         DrawTextEx(font, "~ Go Turbo Model v1 ~", {20, 13}, 28, 2, WHITE);
         
-        DrawRectangleRounded({350, 13, 200, 50}, 0.3f, 6, lightBlue);
+        DrawRectangleRounded({350, 13, 200, 50}, 0.6f, 6, lightBlue);
         switch (application.app_state)
         {
         case SetBounds:
@@ -50,35 +50,48 @@ int main()
         }
 
         //text tutorial keybindings
-        DrawRectangleRounded({350, 75, 200, 165}, 0.3f, 6, lightBlue);
+        DrawRectangleRounded({350, 75, 200, 155}, 0.05f, 6, lightBlue);
         DrawTextEx(font, "Space - toggle auto\n"
                          "1-3 - Sim speed\n"
                          "A - Random board\n"
                          "S - Iterate\n"
                          "D - Bounds (twice)\n"
-                         "ESC - CLOSE", {365, 90}, 16, 2, WHITE);
+                         "ESC - CLOSE", {365, 85}, 16, 2, WHITE);
         
         //Stats - Iterations, attempts
-        DrawRectangleRounded({350, 250, 200, 155}, 0.3f, 6, lightBlue);
+        DrawRectangleRounded({350, 238, 200, 80}, 0.1f, 6, lightBlue);
         
-        std::string stats_string = "Iterations= ";
+        std::string stats_string = "Automation= ";
+        stats_string.append(application.AutomationEnabled ? "true" : "false");
+        stats_string.append("\nSteps= ");
         stats_string.append(std::to_string(application.totalIterations));
         stats_string.append("\nAttempts= ");
         stats_string.append(std::to_string(application.attempts));
-        stats_string.append("\nLowestSolution= ");
-        stats_string.append(std::to_string(application.bestScore));
-        stats_string.append("\nAutomation= ");
-        stats_string.append(application.AutomationEnabled ? "true" : "false");
-        stats_string.append("\nBounds= ");
-        stats_string.append(std::to_string(application.bot.topLeftBoardX));
-        stats_string.append(".");
-        stats_string.append(std::to_string(application.bot.topLeftBoardY));
-        stats_string.append("\n");
-        stats_string.append(std::to_string(application.bot.rightBottomBoardX));
-        stats_string.append(".");
-        stats_string.append(std::to_string(application.bot.rightBottomBoardY));
-        
-        DrawTextEx(font, stats_string.c_str(), {365, 265}, 16, 2, WHITE);
+        DrawTextEx(font, stats_string.c_str(), {365, 246}, 16, 2, WHITE);
+
+        // bounds UI
+        DrawRectangleRounded({350, 326, 200, 82}, 0.1f, 6, lightBlue);
+
+        std::string bounds_string = "\n------Bounds------";
+        if (application.bot.topLeftBoardX == 0 && application.bot.topLeftBoardY == 0)
+        {
+            bounds_string.append("\nmissing top left");
+        }else{
+            bounds_string.append("\nX: ");
+            bounds_string.append(std::to_string(application.bot.topLeftBoardX));
+            bounds_string.append("  Y: ");
+            bounds_string.append(std::to_string(application.bot.topLeftBoardY));
+        }
+        if (application.bot.rightBottomBoardX == 0 && application.bot.rightBottomBoardY == 0)
+        {
+            bounds_string.append("\nmissing bottom right");
+        }else{
+            bounds_string.append("\nX: ");
+            bounds_string.append(std::to_string(application.bot.rightBottomBoardX));
+            bounds_string.append("  Y: ");
+            bounds_string.append(std::to_string(application.bot.rightBottomBoardY));
+        }
+        DrawTextEx(font, bounds_string.c_str(), {365, 310}, 16, 2, WHITE);
 
         
         application.tick();
