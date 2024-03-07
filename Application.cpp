@@ -76,8 +76,23 @@ void Application::IterateTask()
     // if solution found, restart
     if (app_state == Solved)
     {
-        app_state = Executing;
-        bot.startupBot(bestClickSequence);
+        if (bot.IsBoundsSet())
+        {
+            app_state = Executing;
+            bot.startupBot(bestClickSequence);
+            
+        }
+        else
+        {
+            if (AutomationEnabled)
+            {
+                AutomationEnabled = false;
+            }
+            else
+            {
+                StartAttempt();
+            }
+        }
         return;
     }
     
@@ -139,8 +154,6 @@ void Application::HandleGridState(gridState state)
         app_state = Solved;
         bestClickSequence = currentClickSequence;
         bestScore = grid.CoordsWithContent.size();
-        //AutomationEnabled = false;
-        //StartupBot();
         break;
     }
 }
