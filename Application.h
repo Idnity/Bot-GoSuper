@@ -3,7 +3,7 @@
 #include "grid.h"
 #include "WindowSettings.h"
 
-enum AppState { SetBounds, Searching, Solved, Executing, Paused };
+enum AppState { SetBounds, Searching, Solved, BotExecuting };
 
 class Application
 {
@@ -16,6 +16,7 @@ public:
     void StartAttempt();
     void GenerateRandomBoard();
     void HandleGridState(gridState state);
+    void GetBoardFromScreenAndAttempt();
     void DoRandomValidClick();
 
     void tick();

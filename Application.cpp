@@ -49,12 +49,11 @@ void Application::HandleInput()
         else
         {
             bot.SetBounds();
-            if(bot.IsBoundsSet())
+            if (bot.IsBoundsSet())
             {
-                // find board from screen, and cache it
-                grid.SetCurrentGrid(bot.GetScreenBoardFromBounds());
-                CachedBoard = grid.gridV2;
-                app_state = Searching;
+                bot.updateTime = 2;
+                bot.botState = WaitingOnNewBoard;
+                app_state = BotExecuting;
             }
         }
         break;
@@ -73,28 +72,18 @@ void Application::HandleInput()
 
 void Application::IterateTask()
 {
-    // if solution found, restart
-    if (app_state == Solved)
+    switch (app_state)
     {
+    case Solved:
+        // if solution found, restart
         if (bot.IsBoundsSet())
         {
-            app_state = Executing;
+            app_state = BotExecuting;
             bot.startupBot(bestClickSequence);
-            
-        }
-        else
-        {
-            if (AutomationEnabled)
-            {
-                AutomationEnabled = false;
-            }
-            else
-            {
-                StartAttempt();
-            }
         }
         return;
     }
+    
     
     totalIterations++;
     taskIteration++;
@@ -158,6 +147,14 @@ void Application::HandleGridState(gridState state)
     }
 }
 
+void Application::GetBoardFromScreenAndAttempt()
+{
+    // find board from screen, and start search for solution
+    grid.SetCurrentGrid(bot.GetScreenBoardFromBounds());
+    CachedBoard = grid.gridV2;
+    StartAttempt();
+}
+
 void Application::DoRandomValidClick()
 {
     // can be a valid click?
@@ -174,23 +171,23 @@ void Application::DoRandomValidClick()
 void Application::tick()
 {
     HandleInput();
-    if (app_state == Executing)
+
+    switch (app_state)
     {
+    case Searching:
+        // auto iterate of automation enabled
+        if (AutomationEnabled)
+            IterateTask();
+        break;
+        
+    case BotExecuting:
+        bot.isRunning = AutomationEnabled;
         bot.tick(GetFrameTime());
-        if (bot.HasMovedCursor())
+        
+        if (bot.botState == WaitingForSolution)
         {
-            app_state = Paused;
+            GetBoardFromScreenAndAttempt();
         }
-        else if (bot.RequestingNewBoard)
-        {
-            // find board from screen, and cache it
-            grid.SetCurrentGrid(bot.GetScreenBoardFromBounds());
-            CachedBoard = grid.gridV2;
-            StartAttempt();
-        }
-    }
-    else if (AutomationEnabled)
-    {
-        IterateTask();
+        break;
     }
 }

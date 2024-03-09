@@ -41,12 +41,23 @@ int main()
         case Solved:
             DrawTextEx(font, "SOLVED!", {395, 25}, 26, 2, YELLOW);
             break;
-        case Executing:
-            DrawTextEx(font, "Executing", {385, 25}, 26, 2, GREEN);
-            break;
-        case Paused:
-            DrawTextEx(font, "- Paused -", {385, 25}, 26, 2, YELLOW);
-            break;
+        case BotExecuting:
+            switch (application.bot.botState)
+            {
+                case Clicking:
+                    if (application.AutomationEnabled)
+                    {
+                        DrawTextEx(font, "Executing", {385, 25}, 26, 2, GREEN);
+                    }
+                    else
+                    {
+                        DrawTextEx(font, "- Paused -", {385, 25}, 26, 2, YELLOW);
+                    }
+                    break;
+                case WaitingOnNewBoard:
+                    DrawTextEx(font, "Waiting..", {370, 25}, 26, 2, ORANGE);
+                    break;
+            }
         }
 
         //text tutorial keybindings

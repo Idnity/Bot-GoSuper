@@ -9,29 +9,32 @@ Bot::Bot()
 
 void Bot::tick(float DeltaTime)
 {
+    
     // check if time to update
     currentTime += DeltaTime;
     if (currentTime >= updateTime)
     {
         currentTime = 0;
 
-        switch (botTask)
+        switch (botState)
         {
         case Clicking:
             if (clickIndex < clickSequence.size())
             {
+                updateTime = static_cast<float>(rand() / (RAND_MAX * 4) + 0.75);
                 ExecuteClick(GetColumnToScreenPos(clickSequence[clickIndex].column), GetRowToScreenPos(clickSequence[clickIndex].row));
                 clickIndex++;
             }
             else
             {
+                // if clicked all sequence
                 updateTime = 2;
-                botTask = WaitingOnNewBoard;
+                botState = WaitingOnNewBoard;
             }
             break;
             
         case WaitingOnNewBoard:
-            RequestingNewBoard = true;
+            botState = WaitingForSolution;
             break;
         }
     }
@@ -42,8 +45,7 @@ void Bot::startupBot(std::vector<SCoord> BestClickSequence)
     clickSequence = BestClickSequence;
     clickIndex = 0;
     currentTime = 0;
-    botTask = Clicking;
-    RequestingNewBoard = false;
+    botState = Clicking;
     // click update time between 1 and 1.25
     updateTime = static_cast<float>(rand() / (RAND_MAX * 4) + 0.75);
 
@@ -55,12 +57,18 @@ void Bot::startupBot(std::vector<SCoord> BestClickSequence)
 
 void Bot::ExecuteClick(int x, int y)
 {
+    POINT cursorPosBefore;
+    GetCursorPos(&cursorPosBefore);
+
     cursorX = x;
     cursorY = y;
     
     SetCursorPos(x, y);
     mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // Press left mouse button
     mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);   // Release left mouse button
+
+    // move cursor back to original location
+    SetCursorPos(cursorPosBefore.x, cursorPosBefore.y);
 }
 
 bool Bot::HasMovedCursor()
@@ -90,7 +98,7 @@ std::array<int, 132> Bot::GetScreenBoardFromBounds()
             int y = GetRowToScreenPos(row);
             COLORREF PixelColor = GetPixel(hdcScreen, x, y);
 
-            float tolerance = 35;
+            float tolerance = 38;
 
             auto isEqual = [tolerance](float a, float b) {
                 return std::abs(a - b) < tolerance;
@@ -160,6 +168,7 @@ bool Bot::IsBoundsSet()
     rightBottomBoardX != 0 &&
     rightBottomBoardY != 0;
 }
+
 
 int Bot::GetColumnToScreenPos(int column)
 {

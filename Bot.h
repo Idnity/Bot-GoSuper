@@ -4,7 +4,7 @@
 
 #include "SCoord.h"
 
-enum BotTask { Clicking, WaitingOnNewBoard };
+enum BotTask { Clicking, clickWait, WaitingOnNewBoard, WaitingForSolution };
 
 class Bot
 {
@@ -18,7 +18,6 @@ public:
     bool HasMovedCursor();
     
     std::array<int, 132> GetScreenBoardFromBounds();
-    int GetTypeFromPixel(int row, int col);
     void SetBounds();
     void ClearBounds();
     bool IsBoundsSet();
@@ -34,14 +33,14 @@ public:
     int cursorX = 0;
     int cursorY = 0;
 
-    BotTask botTask = Clicking;
-    bool RequestingNewBoard = false;
+    BotTask botState = Clicking;
+    bool isRunning = false;
+    float updateTime = 0;
     
 private:
     
     std::vector<SCoord> clickSequence;
     int clickIndex;
-    float updateTime = 0;
     float currentTime = 0;
 
     int numRows = 12;
