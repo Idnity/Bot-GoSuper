@@ -179,6 +179,12 @@ void Application::tick()
         if (AutomationEnabled)
             IterateTask();
         break;
+
+    case Solved:
+        // this iteration should start bot execution
+        if (AutomationEnabled)
+            IterateTask();
+        break;
         
     case BotExecuting:
         bot.isRunning = AutomationEnabled;

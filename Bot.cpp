@@ -9,19 +9,24 @@ Bot::Bot()
 
 void Bot::tick(float DeltaTime)
 {
-    
-    // check if time to update
-    currentTime += DeltaTime;
-    if (currentTime >= updateTime)
+    switch (botState)
     {
-        currentTime = 0;
+    case Clicking:
 
-        switch (botState)
+        if (!isRunning)
         {
-        case Clicking:
+            break;
+        }
+        
+        // check if time to update
+        currentTime += DeltaTime;
+        if (currentTime >= updateTime)
+        {
+            currentTime = 0;
             if (clickIndex < clickSequence.size())
             {
-                updateTime = static_cast<float>(rand() / (RAND_MAX * 4) + 0.75);
+                // wait time from 0.8 to 1 sec
+                updateTime =  static_cast<float>(rand() / RAND_MAX * 0.2 + 0.8);
                 ExecuteClick(GetColumnToScreenPos(clickSequence[clickIndex].column), GetRowToScreenPos(clickSequence[clickIndex].row));
                 clickIndex++;
             }
@@ -31,12 +36,19 @@ void Bot::tick(float DeltaTime)
                 updateTime = 2;
                 botState = WaitingOnNewBoard;
             }
-            break;
-            
-        case WaitingOnNewBoard:
-            botState = WaitingForSolution;
-            break;
         }
+        break;
+            
+    case WaitingOnNewBoard:
+
+        // check if time to update
+        currentTime += DeltaTime;
+        if (currentTime >= updateTime)
+        {
+            currentTime = 0;
+            botState = WaitingForSolution;
+        }
+        break;
     }
 }
 
@@ -64,8 +76,9 @@ void Bot::ExecuteClick(int x, int y)
     cursorY = y;
     
     SetCursorPos(x, y);
-    mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // Press left mouse button
-    mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);   // Release left mouse button
+    
+    mouse_event(MOUSEEVENTF_LEFTDOWN, cursorX, cursorY, 0, 0); // Press left mouse button
+    mouse_event(MOUSEEVENTF_LEFTUP, cursorX, cursorY, 0, 0);   // Release left mouse button
 
     // move cursor back to original location
     SetCursorPos(cursorPosBefore.x, cursorPosBefore.y);
