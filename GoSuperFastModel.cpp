@@ -55,7 +55,7 @@ int main()
                     }
                     break;
                 case WaitingOnNewBoard:
-                    DrawTextEx(font, "Waiting..", {370, 25}, 26, 2, ORANGE);
+                    DrawTextEx(font, "Wait for board..", {365, 27}, 22, 2, YELLOW);
                     break;
             }
         }
@@ -65,7 +65,7 @@ int main()
         DrawTextEx(font, "Space - toggle auto\n"
                          "1-3 - Sim speed\n"
                          "A - Random board\n"
-                         "S - Iterate\n"
+                         "S - Next step\n"
                          "D - Bounds (twice)\n"
                          "ESC - CLOSE", {365, 85}, 16, 2, WHITE);
         
